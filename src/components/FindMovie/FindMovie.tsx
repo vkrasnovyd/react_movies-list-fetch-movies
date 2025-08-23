@@ -9,13 +9,13 @@ import { MovieData } from '../../types/MovieData';
 import { Movie } from '../../types/Movie';
 
 function getMovieFromData(data: MovieData): Movie {
+  // eslint-disable-next-line max-len, prettier/prettier
+  const defaultImage = 'https://placeholder.vn/placeholder/360x270?text=no%20preview&bg=cccccc&color=9c9c9c';
+
   return {
     title: data.Title,
     description: data.Plot || '',
-    imgUrl:
-      data.Poster !== 'N/A'
-        ? data.Poster
-        : 'https://via.placeholder.com/360x270.png?text=no%20preview',
+    imgUrl: data.Poster !== 'N/A' ? data.Poster : defaultImage,
     imdbUrl: `https://www.imdb.com/title/${data.imdbID}`,
     imdbId: data.imdbID,
   };
