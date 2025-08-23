@@ -1,7 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
+import classNames from 'classnames';
+
 import './FindMovie.scss';
 
+import { MovieCard } from '../MovieCard';
+import { getMovie } from '../../api';
+import { MovieData } from '../../types/MovieData';
+import { Movie } from '../../types/Movie';
+
+function getMovieFromData(data: MovieData): Movie {
+  return {
+    title: data.Title,
+    description: data.Plot,
+    imgUrl: data.Poster,
+    imdbUrl: `https://www.imdb.com/de/title/${data.imdbID}/`,
+    imdbId: data.imdbID,
+  };
+}
+
 export const FindMovie: React.FC = () => {
+  const [movie, setMovie] = useState<Movie | null>(null);
+  const [query, setQuery] = useState('');
+  const [hasError, setHasError] = useState(false);
+
+  function findMovie(event: React.FormEvent) {
+    event.preventDefault();
+
+    if (query) {
+      setHasError(false);
+
+      getMovie(query).then(data => {
+        if (data.Response === 'True') {
+          setMovie(getMovieFromData(data));
+        } else {
+          setHasError(true);
+        }
+      });
+    }
+  }
+
   return (
     <>
       <form className="find-movie">
@@ -16,7 +53,9 @@ export const FindMovie: React.FC = () => {
               type="text"
               id="movie-title"
               placeholder="Enter a title to search"
-              className="input is-danger"
+              className={classNames('input', { 'is-danger': hasError })}
+              value={query}
+              onChange={e => setQuery(e.target.value)}
             />
           </div>
 
@@ -31,6 +70,8 @@ export const FindMovie: React.FC = () => {
               data-cy="searchButton"
               type="submit"
               className="button is-light"
+              onClick={findMovie}
+              disabled={!query}
             >
               Find a movie
             </button>
