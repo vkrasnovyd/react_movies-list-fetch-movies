@@ -3,7 +3,7 @@ import { useState } from 'react';
 export function useLocalStorage<T>(
   key: string,
   defaultValue: T,
-): [T, (newValue: T) => void] {
+): [T, (newValue: T | ((prev: T) => T)) => void] {
   const [value, setValue] = useState(() => {
     const savedValue = localStorage.getItem(key);
 
@@ -18,9 +18,17 @@ export function useLocalStorage<T>(
     }
   });
 
-  function saveValue(newValue: T) {
-    setValue(newValue);
-    localStorage.setItem(key, JSON.stringify(newValue));
+  function saveValue(newValue: T | ((prev: T) => T)) {
+    setValue((prev: T) => {
+      const valueToReturn =
+        typeof newValue === 'function'
+          ? (newValue as (prev: T) => T)(prev)
+          : newValue;
+
+      localStorage.setItem(key, JSON.stringify(valueToReturn));
+
+      return valueToReturn;
+    });
   }
 
   return [value, saveValue] as const;
