@@ -7,10 +7,11 @@ import { MovieCard } from '../MovieCard';
 import { getMovie } from '../../api';
 import { MovieData } from '../../types/MovieData';
 import { Movie } from '../../types/Movie';
+import { defaultImageUrl } from '../../services/defaultImageUrl';
 
 function getMovieFromData(data: MovieData): Movie {
   // eslint-disable-next-line max-len, prettier/prettier
-  const defaultImage = 'https://placeholder.vn/placeholder/360x270?text=no%20preview&bg=cccccc&color=9c9c9c';
+  const defaultImage = defaultImageUrl;
 
   return {
     title: data.Title,
